@@ -35,3 +35,19 @@ func (adb *AccessDb) Close() {
 		log.WarningMessage("There is no open Access database connection to close")
 	}
 }
+
+func (adb *AccessDb) GetConnectionCount() int {
+	if adb.db != nil {
+		return adb.db.Stats().OpenConnections
+	}
+	return 0
+}
+
+func (adb *AccessDb) ExecuteSqlStatement(stmt string) {
+	if adb.db != nil {
+		_, err := adb.db.Query(stmt)
+		if err != nil {
+			log.Error(err, fmt.Sprintf("Could not execute the statement query: %s", stmt))
+		}
+	}
+}

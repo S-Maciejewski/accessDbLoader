@@ -2,6 +2,7 @@ package main
 
 import (
 	"access_db_generator/accessDb"
+	"access_db_generator/sqlReader"
 	"io"
 	"os"
 )
@@ -34,12 +35,21 @@ func copyFile(src, dst string) error {
 
 func main() {
 	resultFilePath := "result.accdb"
-	err := copy("blank_db.accdb", resultFilePath)
+	sqlScriptPath := "script.sql"
+
+	err := copyFile("blank_db.accdb", resultFilePath)
 	panicErr(err)
 
 	db := accessDb.New(resultFilePath)
 	db.Open()
-	db.Close()
+	defer db.Close()
+
+	sqlReader.ReadAndLoadSqlFile(&db, sqlScriptPath)
+
+	//db2 := accessDb.New(resultFilePath)
+	//db2.Open()
+	//fmt.Println(db2.GetConnectionCount())
+	//db.ExecuteSqlStatement("CREATE TABLE TEST(ID INTEGER, NAME CHAR(50));")
 
 	//queryRes, err := db.Query("select MSysObjects.name from MSysObjects")
 }
