@@ -1,20 +1,18 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
-	"github.com/bennof/accessDBwE"
+	"access_db_generator/accessDb"
 	"io"
 	"os"
 )
 
-func checkErr(err error) {
+func panicErr(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
-func copy(src, dst string) error {
+func copyFile(src, dst string) error {
 	in, err := os.Open(src)
 	if err != nil {
 		return err
@@ -34,18 +32,14 @@ func copy(src, dst string) error {
 	return out.Close()
 }
 
-func getAccessDatabase(fileName string) (db *sql.DB, err error)  {
-	db, err = accessdbwe.Open("adodb", fmt.Sprintf("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=%s;", fileName))
-	return
-}
-
 func main() {
-	err := copy("blank_db.accdb", "result.accdb")
-	checkErr(err)
-	db, err := getAccessDatabase("result.accdb")
-	checkErr(err)
+	resultFilePath := "result.accdb"
+	err := copy("blank_db.accdb", resultFilePath)
+	panicErr(err)
 
-
+	db := accessDb.New(resultFilePath)
+	db.Open()
 	db.Close()
-	// use db like any other sql.db handle
+
+	//queryRes, err := db.Query("select MSysObjects.name from MSysObjects")
 }

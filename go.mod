@@ -7,4 +7,5 @@ require (
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/mattn/go-adodb v0.0.1 // indirect
 	golang.org/x/net v0.0.0-20201006153459-a7d1128ccaa0 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
 )
