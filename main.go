@@ -5,6 +5,8 @@ import (
 	"access_db_generator/logger"
 	"access_db_generator/sqlReader"
 	"fmt"
+	"io/ioutil"
+	"os"
 )
 
 func main() {
@@ -13,10 +15,16 @@ func main() {
 	logFile := logger.InitLogFile("dbLoader.log")
 	defer logger.CloseLogFile(logFile)
 
-	err := CopyFile("blank_db.accdb", args.ResultDbPath)
+	data, err := Asset("resource/blank_db.accdb")
 	if err != nil {
-		logger.Error(err, "Could not create result database file")
-		panic(err)
+		logger.Error(err, "Could not read resources via bindata.go - corrupted build")
+		os.Exit(1)
+	}
+
+	err = ioutil.WriteFile(args.ResultDbPath, data, 0666)
+	if err != nil {
+		logger.Error(err, "Could not generate Access database file")
+		os.Exit(1)
 	}
 	logger.Info(fmt.Sprintf("Created an empty Access database file: %s", args.ResultDbPath))
 
