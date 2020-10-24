@@ -6,6 +6,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
 	"unicode/utf8"
 )
 
@@ -28,6 +29,7 @@ func SplitStatements(data []byte, atEOF bool) (advance int, token []byte, err er
 }
 
 func ReadAndLoadSqlFile(db *accessDb.AccessDb, sqlFilePath string) {
+	start := time.Now()
 	logger.Info(fmt.Sprintf("Executing SQL statements in %s", sqlFilePath))
 	file, err := os.Open(sqlFilePath)
 	if err != nil {
@@ -35,17 +37,15 @@ func ReadAndLoadSqlFile(db *accessDb.AccessDb, sqlFilePath string) {
 		return
 	}
 
-	stat, _ := file.Stat()
-	fmt.Println("File size:", stat.Size()) // TODO: Progress bar
+	//stat, _ := file.Stat()
+	//fmt.Println("File size:", stat.Size()) // TODO: Progress bar
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(SplitStatements)
-
 	statementCount := 0
 	for scanner.Scan() {
 		db.ExecuteSqlStatement(scanner.Text())
 		statementCount++
 	}
-
-	logger.Info(fmt.Sprintf("Executed %d SQL statements from %s", statementCount, sqlFilePath))
+	logger.Info(fmt.Sprintf("Executed %d SQL statements from %s in %s ", statementCount, sqlFilePath, time.Since(start)))
 }
