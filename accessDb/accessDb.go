@@ -1,7 +1,7 @@
 package accessDb
 
 import (
-	"access_db_generator/log"
+	"access_db_generator/logger"
 	"database/sql"
 	"fmt"
 	"github.com/bennof/accessDBwE"
@@ -20,7 +20,7 @@ func New(path string) (adb AccessDb) {
 func (adb *AccessDb) Open() {
 	db, err := accessdbwe.Open("adodb", fmt.Sprintf("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=%s", adb.path))
 	if err != nil {
-		log.Error(err, fmt.Sprintf("Could not open Access database connection for %s", adb.path))
+		logger.Error(err, fmt.Sprintf("Could not open Access database connection for %s", adb.path))
 	}
 	adb.db = db
 }
@@ -29,10 +29,10 @@ func (adb *AccessDb) Close() {
 	if adb.db != nil {
 		err := adb.db.Close()
 		if err != nil {
-			log.Error(err, "Could not close Access database connection")
+			logger.Error(err, "Could not close Access database connection")
 		}
 	} else {
-		log.WarningMessage("There is no open Access database connection to close")
+		logger.Warning("There is no open Access database connection to close")
 	}
 }
 
@@ -47,7 +47,7 @@ func (adb *AccessDb) ExecuteSqlStatement(stmt string) {
 	if adb.db != nil {
 		_, err := adb.db.Query(stmt)
 		if err != nil {
-			log.Error(err, fmt.Sprintf("Could not execute the statement query: %s", stmt))
+			logger.ExecutionError(err, fmt.Sprintf("Could not execute the statement query: %s", stmt))
 		}
 	}
 }

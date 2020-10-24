@@ -2,16 +2,17 @@ package main
 
 import (
 	"access_db_generator/accessDb"
+	"access_db_generator/logger"
 	"access_db_generator/sqlReader"
+	"fmt"
 	"io"
 	"os"
 )
 
-func panicErr(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
+const (
+	resultFilePath = "result.accdb"
+	sqlScriptPath  = "script.sql"
+)
 
 func copyFile(src, dst string) error {
 	in, err := os.Open(src)
@@ -34,22 +35,19 @@ func copyFile(src, dst string) error {
 }
 
 func main() {
-	resultFilePath := "result.accdb"
-	sqlScriptPath := "script.sql"
+	logFile := logger.InitLogFile("dbLoader.log")
+	defer logger.CloseLogFile(logFile)
 
 	err := copyFile("blank_db.accdb", resultFilePath)
-	panicErr(err)
+	if err != nil {
+		logger.Error(err, "Could not create result database file")
+		panic(err)
+	}
+	logger.Info(fmt.Sprintf("Created an empty Access database file: %s", resultFilePath))
 
 	db := accessDb.New(resultFilePath)
 	db.Open()
 	defer db.Close()
 
 	sqlReader.ReadAndLoadSqlFile(&db, sqlScriptPath)
-
-	//db2 := accessDb.New(resultFilePath)
-	//db2.Open()
-	//fmt.Println(db2.GetConnectionCount())
-	//db.ExecuteSqlStatement("CREATE TABLE TEST(ID INTEGER, NAME CHAR(50));")
-
-	//queryRes, err := db.Query("select MSysObjects.name from MSysObjects")
 }
