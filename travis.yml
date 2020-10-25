@@ -1,0 +1,30 @@
+language: go
+
+go:
+  - 1.15
+
+before_install:
+  - go get github.com/mitchellh/gox
+#  go get github.com/bennof/accessDBwE
+#  go get github.com/cheggaaa/pb/v3
+#  go get github.com/go-bindata/go-bindata
+#  go get github.com/go-ole/go-ole
+#  go get github.com/mattn/go-adodb
+#  go get golang.org/x/net
+#  go get google.golang.org/appengine
+
+install:
+  - # skip
+
+script:
+  - gox -os "linux windows" -arch="amd64" -output="adbLoader"
+
+deploy:
+  provider: releases
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  file:
+    - adbLoader.exe
+    - adbLoader
+  on:
+    branch: release
