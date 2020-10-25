@@ -3,10 +3,11 @@ package main
 import (
 	"access_db_generator/accessDb"
 	"access_db_generator/logger"
-	"access_db_generator/sqlReader"
+	"access_db_generator/sqlProcessor"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"time"
 )
 
 func main() {
@@ -32,5 +33,8 @@ func main() {
 	db.Open()
 	defer db.Close()
 
-	sqlReader.ReadAndLoadSqlFile(&db, args.SqlFilePath)
+	sqlProcessor.ReadAndLoadSqlFile(&db, args.SqlFilePath)
+
+	// Temporary solution - ExecuteSqlStatement calls need time to finish last inserts before connection is closed
+	time.Sleep(5 * time.Second) //TODO: Check records amount (simple validation) instead of sleep
 }

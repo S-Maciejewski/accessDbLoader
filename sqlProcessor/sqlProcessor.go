@@ -1,10 +1,11 @@
-package sqlReader
+package sqlProcessor
 
 import (
 	"access_db_generator/accessDb"
 	"access_db_generator/logger"
 	"bufio"
 	"fmt"
+	"github.com/cheggaaa/pb/v3"
 	"os"
 	"time"
 	"unicode/utf8"
@@ -29,23 +30,28 @@ func SplitStatements(data []byte, atEOF bool) (advance int, token []byte, err er
 }
 
 func ReadAndLoadSqlFile(db *accessDb.AccessDb, sqlFilePath string) {
-	start := time.Now()
 	logger.Info(fmt.Sprintf("Executing SQL statements in %s", sqlFilePath))
+	start := time.Now()
 	file, err := os.Open(sqlFilePath)
 	if err != nil {
 		logger.Error(err, fmt.Sprintf("Could not open SQL file at %s", sqlFilePath))
 		return
 	}
 
-	//stat, _ := file.Stat()
-	//fmt.Println("File size:", stat.Size()) // TODO: Progress bar
+	// Initialize progress bar
+	stat, _ := file.Stat()
+	progressBar := pb.StartNew(int(stat.Size()))
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(SplitStatements)
 	statementCount := 0
 	for scanner.Scan() {
+		stmt := scanner.Text()
 		db.ExecuteSqlStatement(scanner.Text())
+		// Advance progress bar by the length of current statement
+		progressBar.Add(len(stmt))
 		statementCount++
 	}
+	progressBar.Finish()
 	logger.Info(fmt.Sprintf("Executed %d SQL statements from %s in %s ", statementCount, sqlFilePath, time.Since(start)))
 }

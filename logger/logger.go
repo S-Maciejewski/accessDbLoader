@@ -19,6 +19,7 @@ func InitLogFile(logFileName string) (file *os.File) {
 		Error(err, fmt.Sprintf("Could not open / create logger file at %s", logFileName))
 	}
 	log.SetOutput(file)
+	Info(fmt.Sprintf("\n\n\tAccess DB Loader started"))
 	return
 }
 
