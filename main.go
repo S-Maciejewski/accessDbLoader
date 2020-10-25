@@ -36,5 +36,5 @@ func main() {
 	sqlProcessor.ReadAndLoadSqlFile(&db, args.SqlFilePath)
 
 	// Temporary solution - ExecuteSqlStatement calls need time to finish last inserts before connection is closed
-	time.Sleep(5 * time.Second) //TODO: Check records amount (simple validation) instead of sleep
+	time.Sleep(2 * time.Second) //TODO: Check records amount (simple validation) instead of sleep
 }

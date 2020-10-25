@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/bennof/accessDBwE"
+	"time"
 )
 
 type AccessDb struct {
@@ -50,4 +51,26 @@ func (adb *AccessDb) ExecuteSqlStatement(stmt string) {
 			logger.ExecutionError(err, fmt.Sprintf("Could not execute the statement query: %s", stmt))
 		}
 	}
+}
+
+func (adb *AccessDb) BeginTransaction() {
+	synchronizeQueryExecution()
+	adb.ExecuteSqlStatement("BEGIN TRANSACTION")
+	synchronizeQueryExecution()
+}
+
+func (adb *AccessDb) CommitTransaction() {
+	synchronizeQueryExecution()
+	adb.ExecuteSqlStatement("COMMIT TRANSACTION")
+	synchronizeQueryExecution()
+}
+
+func (adb *AccessDb) RefreshTransaction() {
+	adb.CommitTransaction()
+	adb.BeginTransaction()
+}
+
+// This method is a temporary solution to the problem of Access being too slow to process all the db.Query calls
+func synchronizeQueryExecution() {
+	time.Sleep(time.Millisecond * 200) // TODO: Find out how to synchronize db.Query execution
 }

@@ -41,17 +41,26 @@ func ReadAndLoadSqlFile(db *accessDb.AccessDb, sqlFilePath string) {
 	// Initialize progress bar
 	stat, _ := file.Stat()
 	progressBar := pb.StartNew(int(stat.Size()))
+	progressBar.Set(pb.SIBytesPrefix, true)
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(SplitStatements)
 	statementCount := 0
+
+	db.BeginTransaction()
 	for scanner.Scan() {
 		stmt := scanner.Text()
+		// Seems like the inserts are happening too fast and overload Access
+		// TODO: Find out why after ~60 inserts no more are being executed by db.Query
 		db.ExecuteSqlStatement(scanner.Text())
 		// Advance progress bar by the length of current statement
 		progressBar.Add(len(stmt))
 		statementCount++
+		if statementCount%50 == 0 {
+			db.RefreshTransaction()
+		}
 	}
+	db.CommitTransaction()
 	progressBar.Finish()
 	logger.Info(fmt.Sprintf("Executed %d SQL statements from %s in %s ", statementCount, sqlFilePath, time.Since(start)))
 }
