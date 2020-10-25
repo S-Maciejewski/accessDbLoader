@@ -1,5 +1,6 @@
 # accessDbLoader
 [![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=S-Maciejewski_accessDbLoader&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=S-Maciejewski_accessDbLoader)
 [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
 
 A fast way to convert SQL DDL and inserts into Access database file. 
