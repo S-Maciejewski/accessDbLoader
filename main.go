@@ -1,9 +1,9 @@
 package main
 
 import (
-	"access_db_generator/accessDb"
-	"access_db_generator/logger"
-	"access_db_generator/sqlProcessor"
+	"accessDbLoader/accessDb"
+	"accessDbLoader/logger"
+	"accessDbLoader/sqlProcessor"
 	"fmt"
 	"io/ioutil"
 	"os"

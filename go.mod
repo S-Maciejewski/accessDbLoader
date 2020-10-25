@@ -1,4 +1,4 @@
-module access_db_generator
+module accessDbLoader
 
 go 1.15
 

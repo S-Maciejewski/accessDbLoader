@@ -1,7 +1,7 @@
 package accessDb
 
 import (
-	"access_db_generator/logger"
+	"accessDbLoader/logger"
 	"database/sql"
 	"fmt"
 	"github.com/bennof/accessDBwE"

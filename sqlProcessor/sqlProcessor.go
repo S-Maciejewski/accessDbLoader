@@ -1,8 +1,8 @@
 package sqlProcessor
 
 import (
-	"access_db_generator/accessDb"
-	"access_db_generator/logger"
+	"accessDbLoader/accessDb"
+	"accessDbLoader/logger"
 	"bufio"
 	"fmt"
 	"github.com/cheggaaa/pb/v3"
