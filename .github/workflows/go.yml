@@ -40,4 +40,13 @@ jobs:
       run: |
         gox -os "linux windows" -arch="amd64" -output="adbLoader"
         ls
-        pwd
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Windows version
+        path: adbLoader.exe
+        
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Linux version
+        path: adbLoader
