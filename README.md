@@ -7,7 +7,14 @@ A fast way to convert SQL DDL and inserts into Access database file.
 This tool was created to solve the problem of loading multiple SQL inserts (or executing multiple SQL DDL statements), what is not supported in MS Access. 
 Right now it supports creating a new MS Access .accdb file from an SQL script.
 
-## Usage
-Clone the repo and build the module with `go build accessDbLoader`.
+## Installation
+Go to releases and download an executable for your system:
+- `adbLoader.exe` for Windows 
+- `adbLoader` for linux (amd64)
 
-In the future I plan to include .exe version for direct download in releases
+## Usage
+The adbLoader is a command line application and it takes following arguments:
+- `-db-path <path>`  a relative path to output (newly generated) Access database file (by default it's './result.accdb')
+- `-sql-path <path>` a relative path to the file containing SQL DDL and insert statements
+- `-h` displays usage help
+
