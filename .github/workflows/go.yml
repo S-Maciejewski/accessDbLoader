@@ -34,3 +34,12 @@ jobs:
 
     - name: Test
       run: go test -v .
+
+    - name: Generate build files
+      uses: thatisuday/go-cross-build@v1
+      with:
+          platforms: 'linux/amd64, darwin/amd64, windows/amd64'
+          package: ''
+          name: 'dbLoader'
+          compress: ''
+          dest: 'resource'
