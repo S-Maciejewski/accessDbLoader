@@ -3,6 +3,8 @@ name: Access DB Loader - Build artifacts
 on:
   push:
     branches: [ main ]
+    tags: 
+      - 'v*'
   pull_request:
     branches: [ main ]
 
@@ -50,3 +52,36 @@ jobs:
       with:
         name: Linux version
         path: adbLoader
+        
+  
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+    - name: Upload Windows Release
+      id: upload-windows-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./adbLoader.exe
+          asset_name: adbLoader.exe
+          asset_content_type: application
+          
+    - name: Upload Linux Release
+      id: upload-linux-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./adbLoader
+          asset_name: adbLoader
+          asset_content_type: application
