@@ -28,6 +28,7 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
+        go get github.com/mitchellh/gox
 
     - name: Build
       run: go build -v .
@@ -35,11 +36,8 @@ jobs:
     - name: Test
       run: go test -v .
 
-    - name: Generate build files
-      uses: thatisuday/go-cross-build@v1
-      with:
-          platforms: 'linux/amd64, darwin/amd64, windows/amd64'
-          package: ''
-          name: 'dbLoader'
-          compress: ''
-          dest: 'resource'
+    - name: Build artifacts
+      run: |
+        gox -os "linux windows" -arch="amd64" -output="adbLoader"
+        ls
+        pwd
