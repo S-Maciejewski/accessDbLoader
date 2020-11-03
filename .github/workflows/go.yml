@@ -51,15 +51,16 @@ jobs:
         name: Linux version
         path: adbLoader
         
-  
+    - run: DATE=$(eval date -I)
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          tag_name: $(eval date -I)
-          release_name: Release $(eval date -I)
+          tag_name: ${{ DATE }}
+          release_name: Release ${{ DATE }}
           draft: false
           prerelease: false
     - name: Upload Windows Release
