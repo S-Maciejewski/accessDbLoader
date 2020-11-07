@@ -1,8 +1,10 @@
 package main
 
 import (
+	"accessDbLoader/logger"
 	"flag"
-	"io"
+	"fmt"
+	"io/ioutil"
 	"os"
 )
 
@@ -13,29 +15,25 @@ type Args struct {
 
 func ParseArgs() (args Args) {
 	flag.PrintDefaults()
-	resultDbPath := flag.String("db-path", "./result.accdb", "Specify output database file path")
+	resultDbPath := flag.String("db-path", "./result.accdb",
+		"Specify output database file path or a path where new database file should be created")
 	sqlFilePath := flag.String("sql-path", "", "Specify SQL file to execute path")
 	flag.Parse()
 	args = Args{ResultDbPath: *resultDbPath, SqlFilePath: *sqlFilePath}
 	return
 }
 
-func CopyFile(src, dst string) error {
-	in, err := os.Open(src)
+func GenerateResultFile(dbFilePath string) {
+	data, err := Asset("resource/blank_db.accdb")
 	if err != nil {
-		return err
+		logger.Error(err, "Could not read resources via bindata.go - corrupted build")
+		os.Exit(1)
 	}
-	defer in.Close()
 
-	out, err := os.Create(dst)
+	err = ioutil.WriteFile(dbFilePath, data, 0666)
 	if err != nil {
-		return err
+		logger.Error(err, "Could not generate Access database file")
+		os.Exit(1)
 	}
-	defer out.Close()
-
-	_, err = io.Copy(out, in)
-	if err != nil {
-		return err
-	}
-	return out.Close()
+	logger.Info(fmt.Sprintf("Created an empty Access database file: %s", dbFilePath))
 }

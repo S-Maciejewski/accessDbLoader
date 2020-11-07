@@ -5,7 +5,6 @@ import (
 	"accessDbLoader/logger"
 	"accessDbLoader/sqlProcessor"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"time"
 )
@@ -16,18 +15,14 @@ func main() {
 	logFile := logger.InitLogFile("dbLoader.log")
 	defer logger.CloseLogFile(logFile)
 
-	data, err := Asset("resource/blank_db.accdb")
-	if err != nil {
-		logger.Error(err, "Could not read resources via bindata.go - corrupted build")
-		os.Exit(1)
+	if _, err := os.Stat(args.ResultDbPath); err == nil {
+		logger.Info(fmt.Sprintf("Opening existing file: %s", args.ResultDbPath))
+	} else if os.IsNotExist(err) {
+		logger.Warning(fmt.Sprintf("Could not find or access file: %s - created a new file", args.ResultDbPath))
+		GenerateResultFile(args.ResultDbPath)
+	} else {
+		panic(err)
 	}
-
-	err = ioutil.WriteFile(args.ResultDbPath, data, 0666)
-	if err != nil {
-		logger.Error(err, "Could not generate Access database file")
-		os.Exit(1)
-	}
-	logger.Info(fmt.Sprintf("Created an empty Access database file: %s", args.ResultDbPath))
 
 	db := accessDb.New(args.ResultDbPath)
 	db.Open()
