@@ -53,6 +53,17 @@ func (adb *AccessDb) ExecuteSqlStatement(stmt string) {
 	}
 }
 
+func (adb *AccessDb) GetQueryResult(query string) *sql.Rows {
+	if adb.db != nil {
+		result, err := adb.db.Query(query)
+		if err != nil {
+			logger.ExecutionError(err, fmt.Sprintf("Could not execute and get results for the query: %s", query))
+		}
+		return result
+	}
+	return nil
+}
+
 func (adb *AccessDb) BeginTransaction() {
 	synchronizeQueryExecution()
 	adb.ExecuteSqlStatement("BEGIN TRANSACTION")

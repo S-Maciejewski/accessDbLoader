@@ -84,6 +84,43 @@ func TestAccessDb_Close(t *testing.T) {
 	}
 }
 
+func TestAccessDb_ExecuteSqlStatement(t *testing.T) {
+	tests := []struct {
+		name       string
+		statements []string
+	}{
+		{"Create simple table, insert one row",
+			[]string{"create table TEST(ID integer, VAL text);",
+				"insert into TEST values (1, 'test text');"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dbPath := "test.accdb"
+			reproduceTestDatabase(dbPath)
+			db := New(dbPath)
+			db.Open()
+			if count := db.GetConnectionCount(); count != 1 {
+				t.Error("No connections opened - db.Open failed")
+			}
+			db.BeginTransaction()
+			for _, statement := range tt.statements {
+				db.ExecuteSqlStatement(statement)
+			}
+			db.CommitTransaction()
+			rows := db.GetQueryResult("select VAL from TEST;")
+			var rowResult string
+			for rows.Next() {
+				err := rows.Scan(&rowResult)
+				if err != nil {
+					t.Error(err)
+				}
+				println(rowResult)
+			}
+		})
+	}
+}
+
 //
 //func TestAccessDb_BeginTransaction(t *testing.T) {
 //	type fields struct {
@@ -129,30 +166,7 @@ func TestAccessDb_Close(t *testing.T) {
 //	}
 //}
 //
-//func TestAccessDb_ExecuteSqlStatement(t *testing.T) {
-//	type fields struct {
-//		path string
-//		db   *sql.DB
-//	}
-//	type args struct {
-//		stmt string
-//	}
-//	tests := []struct {
-//		name   string
-//		fields fields
-//		args   args
-//	}{
-//		// TODO: Add test_assets cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			adb := &AccessDb{
-//				path: tt.fields.path,
-//				db:   tt.fields.db,
-//			}
-//		})
-//	}
-//}
+
 //
 //func TestAccessDb_RefreshTransaction(t *testing.T) {
 //	type fields struct {
