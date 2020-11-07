@@ -14,7 +14,7 @@ func TestGenerateResultFile(t *testing.T) {
 		fileName string
 	}{
 		{"File name only (no path)", "db.accdb"},
-		{"Sub-directory file", "./resource/db.accdb"},
+		{"Same directory file", "db.accdb"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
